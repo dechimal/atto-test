@@ -26,7 +26,7 @@ export CXX
 export CXXFLAGS
 export IPATH
 
-.PHONY: build clean test all time
+.PHONY: build clean test all
 
 all: build
 
@@ -35,9 +35,6 @@ build:
 
 test: build
 	$(MAKE) -C test test
-
-time: build
-	$(MAKE) -C test time
 
 clean:
 	$(MAKE) -C src clean
