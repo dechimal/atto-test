@@ -8,33 +8,35 @@
 #include "boost/fusion/include/fold.hpp"
 #include "boost/preprocessor/cat.hpp"
 
-#define ATTO_TEST(name) ATTO_TEST_I(name, BOOST_PP_CAT(name, t))
+#define ATTO_TEST(name) ATTO_TEST_I(name, BOOST_PP_CAT(atto_test_test, name))
 #define ATTO_TEST_I(name, type) \
     struct type { \
-        type() { \
+        static int init() { \
             atto_test::add_test(test, ATTO_TEST_TO_STR(name)); \
+            return 0; \
         } \
-        static type x; \
+        static int x; \
         static void test(); \
     }; \
-    type type::x = type(); \
+    int type::x = type::init(); \
     void type::test()
 
-#define ATTO_TEST_PARAM(name, ...) ATTO_TEST_PARAM_I(name, BOOST_PP_CAT(parameterized, name), __VA_ARGS__)
-#define ATTO_TEST_PARAM_I(name, type, ...) \
-    template<typename T> struct type; \
-    template<> struct type<ATTO_TEST_GET_COUNTER()> { \
-        type() { \
-            atto_test::add_test(test, ATTO_TEST_TO_STR(name(__VA_ARGS__))); \
+#define ATTO_TEST_PARAM(name, ...) ATTO_TEST_PARAM_I(name, BOOST_PP_CAT(atto_test_testcase, name), ATTO_TEST_GET_COUNTER(__LINE__)::value, name(__VA_ARGS__))
+#define ATTO_TEST_PARAM_I(name, type, counter, call) \
+    template<std::size_t, std::size_t> struct type; \
+    template<> struct type<__LINE__, counter> { \
+        static int init() { \
+            atto_test::add_test(test, ATTO_TEST_TO_STR(call)); \
+            return 0; \
         } \
-        static type x; \
+        static int x; \
         static void test(); \
     }; \
-    type<ATTO_TEST_GET_COUNTER()> type<ATTO_TEST_GET_COUNTER()>::x = type(); \
-    void type<ATTO_TEST_GET_COUNTER()>::test() { \
-        name(__VA_ARGS__); \
+    int type<__LINE__, counter>::x = type::init(); \
+    void type<__LINE__, counter>::test() { \
+        call; \
     } \
-    ATTO_TEST_INC_COUNTER()
+    ATTO_TEST_INC_COUNTER(__LINE__)
 
 #define ATTO_ASSERT_BASE(expr, msg) \
     atto_test::assert_(expr, __FILE__, __LINE__, [&] { return msg; })
@@ -68,8 +70,11 @@ extern void * enabler;
 void add_test(void(*)(), char const *);
 void assert_(bool cond, std::string const & file, std::size_t line, std::function<std::string()> msg);
 
-#define ATTO_TEST_GET_COUNTER() decltype(atto_test_counter(atto_test::max_count{}))
-#define ATTO_TEST_INC_COUNTER() atto_test::succ<ATTO_TEST_GET_COUNTER()> atto_test_counter(atto_test::succ<ATTO_TEST_GET_COUNTER()>)
+template<std::size_t N>
+using size_t = std::integral_constant<std::size_t, N>;
+
+#define ATTO_TEST_GET_COUNTER(id) decltype(atto_test_counter(atto_test::size_t<id>{}, atto_test::max_count{}))
+#define ATTO_TEST_INC_COUNTER(id) atto_test::succ<ATTO_TEST_GET_COUNTER(id)> atto_test_counter(atto_test::size_t<id>, atto_test::succ<ATTO_TEST_GET_COUNTER(id)>)
 
 template<std::size_t N>
 struct count : count<N-1> {
@@ -191,11 +196,11 @@ std::string to_string_tuple(std::string &&, Tuple const &, Index, Size);
 
 template<typename ...Elems>
 std::string to_string_(std::tuple<Elems...> const & tup) {
-    return here::to_string_tuple("(", tup, std::integral_constant<std::size_t, 0>{}, std::tuple_size<std::tuple<Elems...>>{});
+    return here::to_string_tuple("(", tup, here::size_t<0>{}, std::tuple_size<std::tuple<Elems...>>{});
 }
 template<typename T, typename U>
 std::string to_string_(std::pair<T, U> const & p) {
-    return here::to_string_tuple("(", p, std::integral_constant<std::size_t, 0>{}, std::tuple_size<std::pair<T, U>>{});
+    return here::to_string_tuple("(", p, here::size_t<0>{}, std::tuple_size<std::pair<T, U>>{});
 }
 template<typename T>
 std::string to_string_(T const & x) {
@@ -269,14 +274,14 @@ template<typename Tuple, typename Index, typename Size, ATTO_TEST_REQUIRE(!Index
 std::string to_string_tuple(std::string && str, Tuple const & tup, Index, Size size) {
     return here::to_string_tuple(str + here::to_string_(std::get<Index::value>(tup)),
                                  tup,
-                                 std::integral_constant<std::size_t, Index::value+1>{},
+                                 here::size_t<Index::value+1>{},
                                  size);
 }
 template<typename Tuple, typename Index, typename Size, ATTO_TEST_REQUIRE(Index::value && Index::value < Size::value)>
 std::string to_string_tuple(std::string && str, Tuple const & tup, Index, Size size) {
     return here::to_string_tuple(str + ", " + here::to_string_(std::get<Index::value>(tup)),
                                  tup,
-                                 std::integral_constant<std::size_t, Index::value+1>{},
+                                 here::size_t<Index::value+1>{},
                                  size);
 }
 template<typename Tuple, typename Index, typename Size, ATTO_TEST_REQUIRE(!(Index::value < Size::value))>
@@ -286,6 +291,7 @@ std::string to_string_tuple(std::string && str, Tuple const & tup, Index, Size) 
 
 }
 
-atto_test::count<0> atto_test_counter(atto_test::count<0> const &);
+template<std::size_t N>
+atto_test::count<0> atto_test_counter(atto_test::size_t<N>, atto_test::count<0> const &);
 
 #endif
