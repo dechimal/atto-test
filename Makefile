@@ -2,12 +2,13 @@
 ROOT := $(shell pwd)
 SRCDIR := $(ROOT)/src
 HEADERDIR := $(ROOT)/include
+BOOST_INCLUDE :=
 
 -include Makefile.config
 
 IPATH := -I$(SRCDIR) -I. -I$(HEADERDIR)
 
-ifeq ($(BOOST_INCLUDE),)
+ifneq ($(BOOST_INCLUDE),)
 IPATH := $(IPATH) -I$(BOOST_INCLUDE)
 endif
 
