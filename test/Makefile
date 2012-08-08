@@ -1,5 +1,5 @@
 
-TARGETS := $(sort $(patsubst %.cpp,%,$(wildcard *.cpp)))
+TARGETS := $(patsubst %.cpp,%,$(wildcard *.cpp))
 SCRIPTS := $(wildcard *.sh)
 
 $(TARGETS) : $(SRCDIR)/libattotest.so
@@ -11,5 +11,5 @@ $(TARGETS) : % : %.cpp
 clean:
 	rm -f $(TARGETS)
 
-test: $(TARGETS) $(SCRIPTS)
+test: $(sort $(TARGETS) $(SCRIPTS))
 	for i in $^; do ./$$i || exit; done
