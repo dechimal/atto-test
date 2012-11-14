@@ -2,14 +2,13 @@
 ROOT := $(shell pwd)
 SRCDIR := $(ROOT)/src
 HEADERDIR := $(ROOT)/include
-BOOST_INCLUDE :=
 
--include Makefile.config
+-include config.mk
 
 IPATH := -I$(SRCDIR) -I. -I$(HEADERDIR)
 
 ifneq ($(BOOST_INCLUDE),)
-IPATH := $(IPATH) -I$(BOOST_INCLUDE)
+IPATH += -I$(BOOST_INCLUDE)
 endif
 
 ifeq ($(findstring clang,$(CXX)),clang)
@@ -19,13 +18,9 @@ ifeq ($(findstring g++,$(CXX)),g++)
 CXX11FLAGS := -std=gnu++0x
 endif
 endif
-CXXFLAGS := $(USER_CXXFLAGS) $(CXX11FLAGS) $(EXTRAFLAGS)
+CXXFLAGS += $(EXTRACXXFLAGS) $(CXX11FLAGS)
 
-export SRCDIR
-export HEADERDIR
-export CXX
-export CXXFLAGS
-export IPATH
+export
 
 .PHONY: build clean test all
 

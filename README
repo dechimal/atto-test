@@ -7,7 +7,7 @@ Boost C++ Libraries (use Boost.Fusion)
 Build:
 git clone git://github.com/dechimal/atto-test.git
 cd atto-test
-echo 'BOOST_INCLUDE := /path/to/boost' >Makefile.config
+echo 'BOOST_INCLUDE := /path/to/boost' >config.mk
 make
 
 Installation:
