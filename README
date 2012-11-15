@@ -19,4 +19,4 @@ cp src/libattotest.so /path/to/lib
 Usage:
 See 10-test.cpp and Makefile under test/
 
-This library uses some C++11's new features. So you need compiling tests as C++11.
+This library uses some C++11's new features. So you need to compile tests as C++11.
