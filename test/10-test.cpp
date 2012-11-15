@@ -6,6 +6,8 @@
 #include "attotest/attotest.hpp"
 
 ATTOTEST(hoge) {
+    ATTOTEST_ASSERT(1);
+    ATTOTEST_ASSERT_NOT(0);
     ATTOTEST_ASSERT_EQUAL(1, 1);
     ATTOTEST_ASSERT_NOT_EQUAL(2, 1);
     ATTOTEST_ASSERT_EQUAL(std::make_tuple(1, 2, 3), std::make_tuple(1, 2, 3));

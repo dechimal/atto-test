@@ -47,10 +47,10 @@
 #define ATTOTEST_ASSERT_BINARY_FUN(f, x, y) \
     ATTOTEST_ASSERT_BASE(f(x, y), ATTOTEST_TO_STR(f(x, y)) " | " + ATTOTEST_SHOW(x) + ", " + ATTOTEST_SHOW(y))
 
+#define ATTOTEST_ASSERT(x) ATTOTEST_ASSERT_BASE(bool(x), "expected true | " + ATTOTEST_SHOW(x))
+#define ATTOTEST_ASSERT_NOT(x) ATTOTEST_ASSERT_BASE(!bool(x), "expected false | " + ATTOTEST_SHOW(x))
 #define ATTOTEST_ASSERT_EQUAL(x, y) ATTOTEST_ASSERT_BINARY_OP(==, x, y)
 #define ATTOTEST_ASSERT_NOT_EQUAL(x, y) ATTOTEST_ASSERT_BINARY_OP(!=, x, y)
-#define ATTOTEST_ASSERT_TRUE(x) ATTOTEST_ASSERT_BASE(bool(x), "expected true | " + ATTOTEST_SHOW(x))
-#define ATTOTEST_ASSERT_FALSE(x) ATTOTEST_ASSERT_BASE(!bool(x), "expected false | " + ATTOTEST_SHOW(x))
 #define ATTOTEST_ASSERT_FAIL() ATTOTEST_ASSERT_BASE(false, "reached to failure code path")
 
 #define ATTOTEST_SHOW(expr) (ATTOTEST_TO_STR(expr) ": " + attotest::to_string_(expr))
