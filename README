@@ -1,12 +1,14 @@
-This is a unittest framework for C++.
+Attotest Unittest Framework
+
+This is a simple unittest framework for C++11.
 
 Prerequisites:
 Later GCC (4.7.0≤) or Clang (3.1≤)
-Boost C++ Libraries (use Boost.Fusion)
+Boost C++ Libraries (use Boost.Fusion, Boost.Preprocessor)
 
 Build:
-git clone git://github.com/dechimal/atto-test.git
-cd atto-test
+git clone git://github.com/dechimal/atto-test.git attotest
+cd attotest
 echo 'BOOST_INCLUDE := /path/to/boost' >config.mk
 make
 
@@ -17,4 +19,4 @@ cp src/libattotest.so /path/to/lib
 Usage:
 See 10-test.cpp and Makefile under test/
 
-This library uses some C++11's new features. So require to compile tests as C++11.
+This library uses some C++11's new features. So you need compiling tests as C++11.
