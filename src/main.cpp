@@ -4,7 +4,7 @@
 #include <type_traits>
 
 #include "boost/lexical_cast.hpp"
-#include "atto_test/atto_test.hpp"
+#include "attotest/attotest.hpp"
 
 namespace atto_test {
 

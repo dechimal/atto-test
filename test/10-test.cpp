@@ -3,7 +3,7 @@
 #include "boost/fusion/include/make_vector.hpp"
 #include "boost/fusion/include/equal_to.hpp"
 
-#include "atto_test/atto_test.hpp"
+#include "attotest/attotest.hpp"
 
 ATTO_TEST(hoge) {
     ATTO_ASSERT_EQUAL(1, 1);
