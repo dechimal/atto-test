@@ -5,13 +5,13 @@
 
 #include "attotest/attotest.hpp"
 
-ATTO_TEST(hoge) {
-    ATTO_ASSERT_EQUAL(1, 1);
-    ATTO_ASSERT_NOT_EQUAL(2, 1);
-    ATTO_ASSERT_EQUAL(std::make_tuple(1, 2, 3), std::make_tuple(1, 2, 3));
+ATTOTEST(hoge) {
+    ATTOTEST_ASSERT_EQUAL(1, 1);
+    ATTOTEST_ASSERT_NOT_EQUAL(2, 1);
+    ATTOTEST_ASSERT_EQUAL(std::make_tuple(1, 2, 3), std::make_tuple(1, 2, 3));
     auto x = std::make_tuple(1, std::vector<int>{2, 3, 4}, 3);
-    ATTO_ASSERT_EQUAL(x, std::make_tuple(1, std::vector<int>{2, 3, 4}, 3));
-    ATTO_ASSERT_EQUAL(boost::fusion::make_vector(1, 2, 3), boost::fusion::make_vector(1, 2, 3));
+    ATTOTEST_ASSERT_EQUAL(x, std::make_tuple(1, std::vector<int>{2, 3, 4}, 3));
+    ATTOTEST_ASSERT_EQUAL(boost::fusion::make_vector(1, 2, 3), boost::fusion::make_vector(1, 2, 3));
 }
 
 struct hoge : private std::vector<int> {
@@ -62,21 +62,21 @@ bool operator==(piyo x, piyo y) {
     return x.x == y.x;
 }
 std::string to_string(piyo x) {
-    return "this function never called in ATTO_ASSERT_*";
+    return "this function never called in ATTOTEST_ASSERT_*";
 }
 }
 
-ATTO_TEST(fuga) {
+ATTOTEST(fuga) {
     auto y = hoge{1, 2, 3};
-    ATTO_ASSERT_EQUAL((hoge{1, 2, 3}), y);
-    ATTO_ASSERT_EQUAL((ns::fuga{1, 2, 3}), (ns::fuga{1, 2, 3}));
-    ATTO_ASSERT_EQUAL(ns2::piyo::a, ns2::piyo::a);
-    ATTO_ASSERT_EQUAL(ns3::piyo{true}, ns3::piyo{true});
+    ATTOTEST_ASSERT_EQUAL((hoge{1, 2, 3}), y);
+    ATTOTEST_ASSERT_EQUAL((ns::fuga{1, 2, 3}), (ns::fuga{1, 2, 3}));
+    ATTOTEST_ASSERT_EQUAL(ns2::piyo::a, ns2::piyo::a);
+    ATTOTEST_ASSERT_EQUAL(ns3::piyo{true}, ns3::piyo{true});
 }
 
 void equal(int x, int y) {
-    ATTO_ASSERT_EQUAL(x, y);
+    ATTOTEST_ASSERT_EQUAL(x, y);
 }
 
-ATTO_TEST_PARAM(equal, 1, 1);
-ATTO_TEST_PARAM(equal, 2, 2);
+ATTOTEST_PARAM(equal, 1, 1);
+ATTOTEST_PARAM(equal, 2, 2);

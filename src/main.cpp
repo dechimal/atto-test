@@ -6,7 +6,7 @@
 #include "boost/lexical_cast.hpp"
 #include "attotest/attotest.hpp"
 
-namespace atto_test {
+namespace attotest {
 
 using boost::lexical_cast;
 
@@ -73,8 +73,8 @@ std::string to_string_(char const * x) {
 }
 
 int main() {
-    for (auto const & t : atto_test::tests) {
-        atto_test::current_test = t.second;
+    for (auto const & t : attotest::tests) {
+        attotest::current_test = t.second;
         t.first();
     }
 }
