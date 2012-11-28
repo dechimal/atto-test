@@ -4,9 +4,10 @@
 #include <string>
 #include <type_traits>
 #include <functional>
-#include "boost/fusion/include/is_sequence.hpp"
-#include "boost/fusion/include/fold.hpp"
-#include "boost/preprocessor/cat.hpp"
+#include <sstream>
+#include <boost/fusion/include/is_sequence.hpp>
+#include <boost/fusion/include/fold.hpp>
+#include <boost/preprocessor/cat.hpp>
 
 #define ATTOTEST(name) ATTOTEST_I(name, BOOST_PP_CAT(attotest_test, name))
 #define ATTOTEST_I(name, type) \
@@ -142,6 +143,14 @@ struct has_adl_to_string_test {
 };
 template<typename T> using has_adl_to_string = sfinae_test<has_adl_to_string_test<T>>;
 
+template<typename T>
+struct is_output_streamable_test {
+    template<typename U = T>
+    static auto test(int, std::ostream * o = nullptr, U const * p = nullptr) -> decltype(*o << *p, (void)0, std::true_type{});
+    static auto test(...) -> std::false_type;
+};
+template<typename T> using is_output_streamable = sfinae_test<is_output_streamable_test<T>>;
+
 std::string to_string_(int);
 std::string to_string_(unsigned int);
 std::string to_string_(long);
@@ -164,6 +173,11 @@ template<typename T, ATTOTEST_REQUIRE(traits::to_string<T>::value)>
 std::string to_string_traits(T const & x);
 template<typename T, ATTOTEST_REQUIRE(!traits::to_string<T>::value)>
 std::string to_string_traits(T const & x);
+
+template<typename T, ATTOTEST_REQUIRE(is_output_streamable<T>::value)>
+std::string to_string_ostream(T const &);
+template<typename T, ATTOTEST_REQUIRE(!is_output_streamable<T>::value)>
+std::string to_string_ostream(T const &);
 
 template<typename T, ATTOTEST_REQUIRE(has_to_string<T>::value)>
 std::string to_string_memfun(T const &);
@@ -213,6 +227,17 @@ std::string to_string_traits(T const & x) {
 }
 template<typename T, ATTOTEST_REQUIRE(!traits::to_string<T>::value)>
 std::string to_string_traits(T const & x) {
+    return here::to_string_ostream(x);
+}
+
+template<typename T, ATTOTEST_REQUIRE(is_output_streamable<T>::value)>
+std::string to_string_ostream(T const & x) {
+    std::ostringstream oss;
+    oss << x;
+    return oss.str();
+}
+template<typename T, ATTOTEST_REQUIRE(!is_output_streamable<T>::value)>
+std::string to_string_ostream(T const & x) {
     return here::to_string_memfun(x);
 }
 

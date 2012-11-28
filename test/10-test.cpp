@@ -1,5 +1,6 @@
 #include <vector>
 #include <tuple>
+#include <iosfwd>
 #include "boost/fusion/include/make_vector.hpp"
 #include "boost/fusion/include/equal_to.hpp"
 
@@ -68,12 +69,37 @@ std::string to_string(piyo x) {
 }
 }
 
+namespace ns4 {
+enum struct foo {
+    a,
+    b,
+    c
+};
+std::ostream & operator<<(std::ostream & ost, foo x) {
+    switch (x) {
+    case foo::a:
+        ost << "foo::a";
+        break;
+    case foo::b:
+        ost << "foo::b";
+        break;
+    case foo::c:
+        ost << "foo::c";
+        break;
+    default:
+        ost << "foo::<unknown>";
+    }
+    return ost;
+}
+}
+
 ATTOTEST(fuga) {
     auto y = hoge{1, 2, 3};
     ATTOTEST_ASSERT_EQUAL((hoge{1, 2, 3}), y);
     ATTOTEST_ASSERT_EQUAL((ns::fuga{1, 2, 3}), (ns::fuga{1, 2, 3}));
     ATTOTEST_ASSERT_EQUAL(ns2::piyo::a, ns2::piyo::a);
     ATTOTEST_ASSERT_EQUAL(ns3::piyo{true}, ns3::piyo{true});
+    ATTOTEST_ASSERT_EQUAL(ns4::foo::a, ns4::foo::a);
 }
 
 void equal(int x, int y) {
