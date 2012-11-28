@@ -96,12 +96,6 @@ template<typename T, typename Enable = void> struct to_string : std::false_type 
 }
 
 
-struct not_found_via_adl {};
-
-not_found_via_adl begin(...);
-not_found_via_adl end(...);
-not_found_via_adl to_string(...);
-
 template<typename T> struct sfinae_test : decltype(T::test(0)) {};
 
 template<typename T>
@@ -114,13 +108,8 @@ template<typename T> using has_begin_end = sfinae_test<has_begin_end_test<T>>;
 
 template<typename T>
 struct has_adl_begin_end_test {
-    // "template<typename U = T> auto test(int) -> decltype(begin(*p), (void)0, end(*p), (void)0, std::true_type{});" causes compile error in g++, if begin/end not found.
-    // I don't know that this behavior and/or below solution is right.
-    template<typename U = T, U const * p = nullptr,
-             ATTOTEST_REQUIRE(!has_begin_end<U>::value),
-             ATTOTEST_REQUIRE(!std::is_same<decltype(begin(*p)), not_found_via_adl>::value),
-             ATTOTEST_REQUIRE(!std::is_same<decltype(end(*p)), not_found_via_adl>::value)>
-    static auto test(int) -> std::true_type;
+    template<typename U = T>
+    static auto test(int, U * p = nullptr) -> decltype(begin(*p), (void)0, end(*p), (void)0, std::true_type{});
     static auto test(...) -> std::false_type;
 };
 
@@ -135,10 +124,8 @@ struct has_to_string_test {
 template<typename T> using has_to_string = sfinae_test<has_to_string_test<T>>;
 template<typename T>
 struct has_adl_to_string_test {
-    template<typename U = T, U const * p = nullptr,
-             ATTOTEST_REQUIRE(!has_to_string<U>::value),
-             ATTOTEST_REQUIRE(!std::is_same<decltype(to_string(*p)), not_found_via_adl>::value)>
-    static auto test(int) -> std::true_type;
+    template<typename U = T>
+    static auto test(int, U * p = nullptr) -> decltype(to_string(*p), (void)0, std::true_type{});
     static auto test(...) -> std::false_type;
 };
 template<typename T> using has_adl_to_string = sfinae_test<has_adl_to_string_test<T>>;

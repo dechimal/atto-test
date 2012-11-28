@@ -36,6 +36,12 @@ struct fuga {
     friend std::vector<int>::iterator end(fuga & x) {
         return x.base.end();
     }
+    friend std::vector<int>::const_iterator begin(fuga const & x) {
+        return x.base.begin();
+    }
+    friend std::vector<int>::const_iterator end(fuga const & x) {
+        return x.base.end();
+    }
     friend bool operator==(fuga const & x, fuga const & y) {
         return x.base == y.base;
     }
