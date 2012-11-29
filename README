@@ -3,8 +3,10 @@ Attotest Unittest Framework
 This is a simple unittest framework for C++11.
 
 Prerequisites:
-Later GCC (4.7.0≤) or Clang (3.1≤)
+Later GCC (4.8.0≤) or Clang (3.1≤)
 Boost C++ Libraries (use Boost.Fusion, Boost.Preprocessor)
+
+(GCC 4.8.0 is experimental in Dec. 2012)
 
 Build:
 git clone git://github.com/dechimal/atto-test.git attotest

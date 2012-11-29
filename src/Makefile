@@ -1,9 +1,21 @@
 
 .PHONY: build clean
+
+CXXFLAGS += -shared -fpic -g -O0
+sources := $(wildcard *.cpp)
+
+lib%.so : %
+	cp $< $@
+
 build: libattotest.so
 
-libattotest.so: *.cpp $(shell find $(HEADERDIR)/attotest -name '*.cpp' -or -name '*.hpp')
-	$(CXX) $(CXXFLAGS) $(IPATH) -shared -fpic -g -o $@ $^
+attotest: *.cpp
 
 clean:
-	rm -rf *.lib *.o *.so
+	rm -rf *.a *.o *.so attotest *.deps libattotest.so
+
+%.deps: %.cpp
+	$(CXX) -MM -MT'$@.so' $(CPPFLAGS) $(CXXFLAGS) $< >$@
+	[[ -s $@ ]] || rm -f $@
+
+include $(sources:.cpp=.deps)

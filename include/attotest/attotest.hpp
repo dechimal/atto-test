@@ -61,6 +61,8 @@
 
 #define ATTOTEST_REQUIRE(...) \
     typename std::enable_if<(__VA_ARGS__)>::type *& = attotest::enabler
+#define ATTOTEST_REQUIRE_DEF(...) \
+    typename std::enable_if<(__VA_ARGS__)>::type *&
 
 namespace attotest {
 namespace here = ::attotest;
@@ -208,36 +210,36 @@ std::string to_string_(T const & x) {
     return here::to_string_traits(x);
 }
 
-template<typename T, ATTOTEST_REQUIRE(traits::to_string<T>::value)>
+template<typename T, ATTOTEST_REQUIRE_DEF(traits::to_string<T>::value)>
 std::string to_string_traits(T const & x) {
     return traits::to_string<T>()(x);
 }
-template<typename T, ATTOTEST_REQUIRE(!traits::to_string<T>::value)>
+template<typename T, ATTOTEST_REQUIRE_DEF(!traits::to_string<T>::value)>
 std::string to_string_traits(T const & x) {
     return here::to_string_ostream(x);
 }
 
-template<typename T, ATTOTEST_REQUIRE(is_output_streamable<T>::value)>
+template<typename T, ATTOTEST_REQUIRE_DEF(is_output_streamable<T>::value)>
 std::string to_string_ostream(T const & x) {
     std::ostringstream oss;
     oss << x;
     return oss.str();
 }
-template<typename T, ATTOTEST_REQUIRE(!is_output_streamable<T>::value)>
+template<typename T, ATTOTEST_REQUIRE_DEF(!is_output_streamable<T>::value)>
 std::string to_string_ostream(T const & x) {
     return here::to_string_memfun(x);
 }
 
-template<typename T, ATTOTEST_REQUIRE(has_to_string<T>::value)>
+template<typename T, ATTOTEST_REQUIRE_DEF(has_to_string<T>::value)>
 std::string to_string_memfun(T const & x) {
     return x.to_string();
 }
-template<typename T, ATTOTEST_REQUIRE(!has_to_string<T>::value)>
+template<typename T, ATTOTEST_REQUIRE_DEF(!has_to_string<T>::value)>
 std::string to_string_memfun(T const & x) {
     return here::to_string_range(x);
 }
 
-template<typename Range, ATTOTEST_REQUIRE(has_begin_end<Range>::value || has_adl_begin_end<Range>::value), ATTOTEST_REQUIRE(!is_sequence<Range>::value)>
+template<typename Range, ATTOTEST_REQUIRE_DEF(has_begin_end<Range>::value || has_adl_begin_end<Range>::value), ATTOTEST_REQUIRE_DEF(!is_sequence<Range>::value)>
 std::string to_string_range(Range const & range) {
     std::string str("[");
     bool trailing = false;
@@ -248,7 +250,7 @@ std::string to_string_range(Range const & range) {
     }
     return str + "]";
 }
-template<typename T, ATTOTEST_REQUIRE(!(has_begin_end<T>::value || has_adl_begin_end<T>::value) || is_sequence<T>::value)>
+template<typename T, ATTOTEST_REQUIRE_DEF(!(has_begin_end<T>::value || has_adl_begin_end<T>::value) || is_sequence<T>::value)>
 std::string to_string_range(T const & x) {
     return here::to_string_fuseq(x);
 }
@@ -264,39 +266,39 @@ struct to_string_fuseq_t {
         return str + ", " + here::to_string_(x);
     }
 };
-template<typename Seq, ATTOTEST_REQUIRE(is_sequence<Seq>::value)>
+template<typename Seq, ATTOTEST_REQUIRE_DEF(is_sequence<Seq>::value)>
 std::string to_string_fuseq(Seq const & x) {
     return boost::fusion::fold(x, std::true_type{}, to_string_fuseq_t()) + ")";
 }
-template<typename T, ATTOTEST_REQUIRE(!is_sequence<T>::value)>
+template<typename T, ATTOTEST_REQUIRE_DEF(!is_sequence<T>::value)>
 std::string to_string_fuseq(T const & x) {
     return here::to_string_adl(x);
 }
 
-template<typename T, ATTOTEST_REQUIRE(has_adl_to_string<T>::value)>
+template<typename T, ATTOTEST_REQUIRE_DEF(has_adl_to_string<T>::value)>
 std::string to_string_adl(T const & x) {
     return to_string(x);
 }
-template<typename T, ATTOTEST_REQUIRE(!has_adl_to_string<T>::value)>
+template<typename T, ATTOTEST_REQUIRE_DEF(!has_adl_to_string<T>::value)>
 std::string to_string_adl(T const &) {
     return to_string_fallback();
 }
 
-template<typename Tuple, typename Index, typename Size, ATTOTEST_REQUIRE(!Index::value && Index::value < Size::value)>
+template<typename Tuple, typename Index, typename Size, ATTOTEST_REQUIRE_DEF(!Index::value && Index::value < Size::value)>
 std::string to_string_tuple(std::string && str, Tuple const & tup, Index, Size size) {
     return here::to_string_tuple(str + here::to_string_(std::get<Index::value>(tup)),
                                  tup,
                                  here::size_t<Index::value+1>{},
                                  size);
 }
-template<typename Tuple, typename Index, typename Size, ATTOTEST_REQUIRE(Index::value && Index::value < Size::value)>
+template<typename Tuple, typename Index, typename Size, ATTOTEST_REQUIRE_DEF(Index::value && Index::value < Size::value)>
 std::string to_string_tuple(std::string && str, Tuple const & tup, Index, Size size) {
     return here::to_string_tuple(str + ", " + here::to_string_(std::get<Index::value>(tup)),
                                  tup,
                                  here::size_t<Index::value+1>{},
                                  size);
 }
-template<typename Tuple, typename Index, typename Size, ATTOTEST_REQUIRE(!(Index::value < Size::value))>
+template<typename Tuple, typename Index, typename Size, ATTOTEST_REQUIRE_DEF(!(Index::value < Size::value))>
 std::string to_string_tuple(std::string && str, Tuple const & tup, Index, Size) {
     return str + ")";
 }

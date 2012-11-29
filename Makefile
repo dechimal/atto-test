@@ -18,7 +18,7 @@ ifeq ($(findstring g++,$(CXX)),g++)
 CXX11FLAGS := -std=gnu++0x
 endif
 endif
-CXXFLAGS += $(EXTRACXXFLAGS) $(CXX11FLAGS)
+CXXFLAGS += $(EXTRACXXFLAGS) $(CXX11FLAGS) $(IPATH)
 
 export
 
