@@ -6,7 +6,7 @@
 
 #include "attotest/attotest.hpp"
 
-ATTOTEST(hoge) {
+ATTOTEST_CASE(hoge) {
     ATTOTEST_ASSERT(1);
     ATTOTEST_ASSERT_NOT(0);
     ATTOTEST_ASSERT_EQUAL(1, 1);
@@ -99,7 +99,7 @@ std::ostream & operator<<(std::ostream & ost, foo x) {
 }
 }
 
-ATTOTEST(fuga) {
+ATTOTEST_CASE(fuga) {
     auto y = hoge{1, 2, 3};
     ATTOTEST_ASSERT_EQUAL((hoge{1, 2, 3}), y);
     ATTOTEST_ASSERT_EQUAL((ns::fuga{1, 2, 3}), (ns::fuga{1, 2, 3}));
@@ -112,5 +112,5 @@ void equal(int x, int y) {
     ATTOTEST_ASSERT_EQUAL(x, y);
 }
 
-ATTOTEST_PARAM(equal, 1, 1);
-ATTOTEST_PARAM(equal, 2, 2);
+ATTOTEST_CASE_PARAM(equal, 1, 1);
+ATTOTEST_CASE_PARAM(equal, 2, 2);

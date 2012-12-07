@@ -9,8 +9,8 @@
 #include <boost/fusion/include/fold.hpp>
 #include <boost/preprocessor/cat.hpp>
 
-#define ATTOTEST(name) ATTOTEST_I(name, BOOST_PP_CAT(attotest_test, name))
-#define ATTOTEST_I(name, type) \
+#define ATTOTEST_CASE(name) ATTOTEST_CASE_I(name, BOOST_PP_CAT(attotest_test, name))
+#define ATTOTEST_CASE_I(name, type) \
     struct type { \
         static int init() { \
             attotest::add_test(test, ATTOTEST_TO_STR(name)); \
@@ -22,8 +22,8 @@
     int type::x = type::init(); \
     void type::test()
 
-#define ATTOTEST_PARAM(name, ...) ATTOTEST_PARAM_I(name, BOOST_PP_CAT(attotest_testcase, name), ATTOTEST_GET_COUNTER(__LINE__)::value, name(__VA_ARGS__))
-#define ATTOTEST_PARAM_I(name, type, counter, call) \
+#define ATTOTEST_CASE_PARAM(name, ...) ATTOTEST_CASE_PARAM_I(name, BOOST_PP_CAT(attotest_testcase, name), ATTOTEST_GET_COUNTER(__LINE__)::value, name(__VA_ARGS__))
+#define ATTOTEST_CASE_PARAM_I(name, type, counter, call) \
     template<std::size_t, std::size_t> struct type; \
     template<> struct type<__LINE__, counter> { \
         static int init() { \
