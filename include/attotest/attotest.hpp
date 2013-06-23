@@ -22,19 +22,19 @@
     int type::x = type::init(); \
     void type::test()
 
-#define ATTOTEST_CASE_PARAM(name, ...) ATTOTEST_CASE_PARAM_I(name, BOOST_PP_CAT(attotest_testcase, name), ATTOTEST_GET_COUNTER(__LINE__)::value, name(__VA_ARGS__))
-#define ATTOTEST_CASE_PARAM_I(name, type, counter, call) \
+#define ATTOTEST_CASE_PARAM(name, ...) ATTOTEST_CASE_PARAM_I(name, BOOST_PP_CAT(attotest_testcase, name), BOOST_PP_CAT(attotest_testfun, name), ATTOTEST_GET_COUNTER(__LINE__)::value, name(__VA_ARGS__))
+#define ATTOTEST_CASE_PARAM_I(name, type, testfun, counter, call) \
     template<std::size_t, std::size_t> struct type; \
     template<> struct type<__LINE__, counter> { \
         static int init() { \
-            attotest::add_test(test, ATTOTEST_TO_STR(call)); \
+            attotest::add_test(testfun, ATTOTEST_TO_STR(call)); \
             return 0; \
         } \
         static int x; \
-        static void test(); \
+        static void testfun(); \
     }; \
     int type<__LINE__, counter>::x = type::init(); \
-    void type<__LINE__, counter>::test() { \
+    void type<__LINE__, counter>::testfun() { \
         call; \
     } \
     ATTOTEST_INC_COUNTER(__LINE__)
